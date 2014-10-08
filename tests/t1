@@ -1,0 +1,9 @@
+type T = un (un bool -> lin bool)
+
+val discard =
+ lin \x:lin bool.
+  (lin \f:T.lin true) (un \y:un bool.x)
+
+val duplicate =
+ lin \:lin bool.
+  (lin \f:T.lin <f (un true),f (un true)>) (un \y:un bool.x)

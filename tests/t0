@@ -1,0 +1,4 @@
+let z = un <x,3> in
+split z as x1,_ in
+split z as x2,_ in
+<free x1,free x2>
