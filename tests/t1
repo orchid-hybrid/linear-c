@@ -5,5 +5,5 @@ val discard =
   (lin \f:T.lin true) (un \y:un bool.x)
 
 val duplicate =
- lin \:lin bool.
+ lin \x:lin bool.
   (lin \f:T.lin <f (un true),f (un true)>) (un \y:un bool.x)
