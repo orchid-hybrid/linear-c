@@ -87,10 +87,27 @@ check (Split t1 x y t2) = do
 
     return t
 
--- q = un => Gamma1 = Gamma2 - (x : T1)
+-- q = un => Gamma1 = Gamma2 \ (x : T1)
 -- Gamma1, x : T1 |- t2 : T2; Gamma2
 -- =============================================================
--- Gamma1 |- q lambda x : T1. t2 : q T1 -> T2; Gamma2 - (x : T1)
+-- Gamma1 |- q lambda x : T1. t2 : q T1 -> T2; Gamma2 \ (x : T1)
+
+check (Lambda q x t1Ty t2) = do
+    gamma1 <- get
+    put (gamma1 ::: (x, t1Ty))
+    t2Ty <- check t2
+    gamma2 <- get
+
+    gamma' <- case gamma2 `difference` (Empty ::: (x, t1Ty)) of
+                Just d -> return d
+                Nothing -> mzero
+
+    case q of
+        Un  -> if gamma1 == gamma' then return () else mzero
+        Lin -> return ()
+
+    put gamma'
+    return (q, t1Ty :-> t2Ty)
 
 -- Gamma1 |- t1 : T11 -> T12 ; Gamma2
 -- Gamma2 |- t2 : T11 ; Gamma3
