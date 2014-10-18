@@ -67,6 +67,31 @@ check (Pair q t1 t2) = do
  guard (qTest' q t2Ty)
  return (q, (t1Ty :* t2Ty))
 
+-- Gamma1 |- t1 : q (T1 * T2) ; Gamma2
+-- Gamma2, x : T1, y : T2 |- t2 : T ; Gamma3
+-- ===============================================================
+-- Gamma1 |- split t1 as x, y in t2 : T ; Gamma3 \ (x : T1, y : T2)
+
+check (Split t1 x y t2) = do
+    (q, xTy :* yTy) <- check t1
+
+    gamma2 <- get
+    put (gamma2 ::: (x, xTy) ::: (y, yTy))
+    
+    t <- check t2
+    gamma3 <- get
+     
+    case gamma3 `difference` (Empty ::: (x, xTy) ::: (y, yTy)) of
+        Just d -> put d
+        Nothing -> mzero
+
+    return t
+
+-- q = un => Gamma1 = Gamma2 - (x : T1)
+-- Gamma1, x : T1 |- t2 : T2; Gamma2
+-- =============================================================
+-- Gamma1 |- q lambda x : T1. t2 : q T1 -> T2; Gamma2 - (x : T1)
+
 -- Gamma1 |- t1 : T11 -> T12 ; Gamma2
 -- Gamma2 |- t2 : T11 ; Gamma3
 -- ============================== (A-App)

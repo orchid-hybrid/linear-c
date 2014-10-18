@@ -1,7 +1,9 @@
 module Linear (
  Q(..), T(..), PTy(..), Ty,
- Context(..), append
+ Context(..), append, difference
  ) where
+
+import Prelude hiding (elem)
 
 data Q
  = Lin
@@ -39,3 +41,16 @@ data Context
 c `append` Empty = c
 c `append` (d ::: t) = (c `append` d) ::: t
 
+difference :: Context -> Context -> Maybe Context
+c `difference` Empty = Just c
+c `difference` (d ::: x@(s, (Lin, t))) = case c `difference` d of
+    Just d' -> if x `elem` d' then Nothing else Just d'
+    Nothing -> Nothing
+c `difference` (d ::: x@(s, (Un, t))) = fmap (delete x) (c `difference` d)
+
+e `elem` Empty = False
+e `elem` (cs ::: c) = if e == c then True else e `elem` cs
+
+--delete :: (String, Ty) -> Context -> Context
+delete e Empty = Empty
+delete e (cs ::: c) = if e == c then cs else (delete e cs) ::: c
