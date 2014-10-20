@@ -1,0 +1,20 @@
+q ::= lin
+    | un
+
+b ::= true
+    | false
+
+t ::= x
+    | q b
+    | if t then t else t
+    | q <t,t>
+    | split t as x,y in t
+    | q \x:T. t
+    | t t
+
+P ::= Bool
+    | T * T
+    | T -> T
+
+T ::= q P
+ 
