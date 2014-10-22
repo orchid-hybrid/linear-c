@@ -1,0 +1,5 @@
+type T = un (un bool -> lin bool)
+
+val discard =
+ lin \x:lin bool.
+  ((lin \f:un (un bool -> lin bool).lin true) (un \y:un bool.x))
